@@ -1,15 +1,8 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  ssl: {
-    rejectUnauthorized: false, // ✅ WAJIB untuk konek ke Supabase (SSL only)
-  },
-});
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("MongoDB error:", err));
 
-module.exports = pool;
+module.exports = mongoose;
