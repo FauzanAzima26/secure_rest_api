@@ -29,13 +29,16 @@ app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   try {
     const result = await pool.query("SELECT * FROM users WHERE username=$1", [username]);
-    if (result.rows.length === 0) return res.status(400).json({ message: "User not found" });
+    if (result.rows.length === 0)
+      return res.status(400).json({ message: "User not found" });
 
     const user = result.rows[0];
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ message: "Invalid password" });
 
-    const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ username }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
     res.json({ token });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -57,8 +60,26 @@ function verifyToken(req, res, next) {
 
 // Protected route
 app.get("/protected", verifyToken, (req, res) => {
-  res.json({ message: `Hello ${req.user.username}, you accessed a protected route!` });
+  res.json({
+    message: `Hello ${req.user.username}, you accessed a protected route!`,
+  });
 });
+
+// Root route (Tambahan)
+app.get("/", (req, res) => {
+  res.json({
+    message: "✅ Secure REST API is running successfully",
+    endpoints: {
+      register: "/register",
+      login: "/login",
+      protected: "/protected",
+      health: "/health",
+    },
+  });
+});
+
+// Health check
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT;
 if (!PORT) {
@@ -66,5 +87,4 @@ if (!PORT) {
   process.exit(1);
 }
 
-app.get("/health", (req, res) => res.json({ status: "ok" }));
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
