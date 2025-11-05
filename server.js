@@ -79,7 +79,15 @@ app.get("/", (req, res) => {
 });
 
 // Health check
-app.get("/health", (req, res) => res.json({ status: "ok" }));
+app.get("/health", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT NOW()");
+    res.json({ status: "ok", db_time: result.rows[0].now });
+  } catch (err) {
+    res.status(500).json({ status: "db_error", error: err.message });
+  }
+});
+
 
 const PORT = process.env.PORT;
 if (!PORT) {
