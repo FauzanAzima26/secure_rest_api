@@ -10,6 +10,9 @@ app.use(express.json());
 
 const users = []; // penyimpanan sementara (bisa diganti DB)
 
+console.log("PORT:", process.env.PORT);
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
 app.get("/", (req, res) => {
   res.send("🚀 Secure REST API with HTTPS and JWT is running!");
 });
