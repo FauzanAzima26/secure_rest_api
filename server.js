@@ -58,6 +58,5 @@ if (!PORT) {
   process.exit(1);
 }
 
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 app.get("/health", (req, res) => res.json({ status: "ok" }));
-
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
